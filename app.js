@@ -1,7 +1,7 @@
 // Pseudo Code //
     // Have these categories on the HTML box:
         // Train Name, Destination, First Train Time (in military time), Frequency (in minutes) //
-    // App should calculate when the next train will arrive, according to current time // 
+    // App should calculate when the next train will arrive, according to current time (moment.js) // 
 
 // =========================================================================================================================//    
 
@@ -23,19 +23,19 @@
   
  var database = firebase.database(); 
 
-// Global Variables //
+// Defining Global Variables //
 
 var name = "";
 var destination = "";
 var startTime = 0;
 var frequency = 0; 
 
-// Button for submitting trains //
+// Button for adding trains //
 
 $("#addTrain").on("click", function(event) {
     event.preventDefault();
 
-// Grab user input //
+// Grab user input from "Add Train" section //
 
 name = $("#trainNameInput").val().trim();
 destination = $("#trainDestination").val().trim();
@@ -54,7 +54,6 @@ database.ref().push({
     destination: destination, 
     startTime: startTime, 
     frequency: frequency
-
 });
 
 // Need to clear out all of the text boxes in the "Add Train" section // 
@@ -64,7 +63,67 @@ $("#trainDestination").val("");
 $("#startTime").val("");
 $("#trainFrequency").val(""); 
 
-}); // <-- onClick Event (Button for adding Trains) is finished //
+}); // <-- Closing of onClick Event (Button for adding Trains) //
+
+// Creating a way to retrieve train information from train database // 
+// So, I'm creating a Firebase event for adding Train infomation to the database and a row in the HTML whenever the user // adds an entry. //
+
+// Whenever the page loads or children are added, this function runs //
+database.ref().on("child_added", function (childSnapshot, prevChildKey) {
+
+    console.log(childSnapshot.val());
+
+// Defining Time Variables //
+
+var getName = childSnapshot.val().name; 
+var getDestination = childSnapshot.val().destination;
+var getTime = childSnapshot.val().startTime;
+var getFrequency = childSnapshot.val().frequency; 
+
+// Calculating the time of next train arrival, and the minute until the next train arrives. Also, convert the start time // of the train to HH:mm (to be used by Momment.JS)
+
+var currentTime = moment();
+
+    console.log("Current Time: " + moment(currentTime).format("HH:mm"));
+
+// Used this as first time (pushed back 1 year to make sure it comes before current time)    
+var convertedFirstTime = moment(getTime, "HH:mm").subtract(1, "years");
+
+    console.log(convertedFirstTime);
+
+// Difference between the start time and the current time //
+var diffTime = moment().diff(moment(convertedFirstTime), "minutes");
+
+    console.log("Difference in the time: " + diffTime);
+
+// Divide the difference by the frequency to get the time apart remainder //
+
+var tRemainder = diffTime % getFrequency;
+
+    console.log(tRemainder);
+
+// Figure out when the next train will come by subracting the time remainder from the frequency of when each train comes //
+
+var minutesAway = getFrequency - tRemainder; 
+
+    console.log("Minutes until train" + minutesAway);
+
+// Figure out when the next train will come by adding the minutes from arrival to current time //
+
+var nextTrain = moment().add(minutesAway, "minutes");
+
+    console.log(nextTrain);
+
+// Store arrival time in a usable format //
+
+var nextArrival = moment(nextTrain, "HHmm").format("h:mm A");
+
+// Dynamically adding entry to the "Add Train" section //
+
+$("#trainTable > tbody").append("<tr><td>" + getName + "</td><td>" + getDestination + "</td><td>" + getFrequency + "</td><td>" + nextArrival + "</td><td" + minutesAway + "</td><td>");
+
+});
+
 
 
 
