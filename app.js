@@ -3,9 +3,7 @@
         // Train Name, Destination, First Train Time (in military time), Frequency (in minutes) //
     // App should calculate when the next train will arrive, according to current time (moment.js) // 
 
-// =========================================================================================================================//    
-
-// $(document).ready(function() {
+// =========================================================================================================================// 
 
  // Initialize Firebase //
  var config = {
@@ -22,6 +20,23 @@
 // Assigning the reference to the database to a variable named 'database' //
   
  var database = firebase.database(); 
+
+// Show current time //
+
+var datetime = null,
+date = null;
+
+var update = function () {
+  date = moment(new Date())
+  datetime.html(date.format('dddd, MMMM Do YYYY, h:mm:ss a'));
+};
+
+$(document).ready(function(){
+  datetime = $('#currentStatus')
+  update();
+  setInterval(update, 1000);
+
+});
 
 // Defining Global Variables //
 
@@ -64,6 +79,18 @@ $("#startTime").val("");
 $("#trainFrequency").val(""); 
 
 }); // <-- Closing of onClick Event (Button for adding Trains) //
+
+// Clear button reset (will clear out all of the text boxes without a page refresh //
+
+$("#clearTrain").on("click", function(event) {
+    event.preventDefault();
+
+    $("#trainNameInput").val("");
+    $("#trainDestination").val(""); 
+    $("#startTime").val("");
+    $("#trainFrequency").val(""); 
+
+}); // <-- Closing of onclick Event for clear button //
 
 // Creating a way to retrieve train information from train database // 
 // So, I'm creating a Firebase event for adding Train infomation to the database and a row in the HTML whenever the user // adds an entry. //
@@ -124,13 +151,15 @@ var row = $('<tr>');
 
 row.append('<td>' + getName + "</td>")
 row.append('<td>' + getDestination + "</td>")
-row.append('<td>' + getFrequency + "</td>")
+row.append('<td>' + "Every " + getFrequency + " mins" + "</td>")
 row.append('<td>' + nextArrival + "</td>")
-row.append('<td>' + minutesAway + "</td>")
+row.append('<td>' + minutesAway +  " mins until arrival" + "</td>")
 
 $("#trainTable > tbody").append(row)
 
+
 });
+
 
 
 

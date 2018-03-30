@@ -4,3 +4,40 @@ body {
     background-repeat:no-repeat;
     opacity: .9;
 } 
+
+.jumbotron {
+	/*background-color: transparent;*/
+    border-bottom: 3px solid white;
+    padding-top: 20px; 
+    padding-bottom: 20px; 
+}
+
+.jumbotron > h1 {
+    color: black;
+    font-family: 'Pacifico', cursive;
+}
+
+.jumbotron > h3 {
+    font-family: 'Josefin Slab', serif;
+}
+
+#currentTrainHeading {
+    font-family: 'Josefin Slab', serif;
+    font-weight: bold !important;
+}
+
+#addTrainHeading {
+    font-family: 'Josefin Slab', serif;
+    font-weight: 700 !important;
+}
+
+#addTrainBox {
+    width: 400px; 
+}
+
+#currentTrainBox {
+    width: 700px; 
+    height: 396x; 
+    float: right; 
+}
+
