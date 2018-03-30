@@ -78,7 +78,7 @@ database.ref().on("child_added", function (childSnapshot, prevChildKey) {
 var getName = childSnapshot.val().name; 
 var getDestination = childSnapshot.val().destination;
 var getTime = childSnapshot.val().startTime;
-var getFrequency = childSnapshot.val().frequency; 
+var getFrequency = parseInt(childSnapshot.val().frequency); 
 
 // Calculating the time of next train arrival, and the minute until the next train arrives. Also, convert the start time // of the train to HH:mm (to be used by Momment.JS)
 
@@ -87,14 +87,14 @@ var currentTime = moment();
     console.log("Current Time: " + moment(currentTime).format("HH:mm"));
 
 // Used this as first time (pushed back 1 year to make sure it comes before current time)    
-var convertedFirstTime = moment(getTime, "HH:mm").subtract(1, "years");
+var convertedFirstTime = moment(getTime, "hh:mm").subtract(1, "years");
 
     console.log(convertedFirstTime);
 
 // Difference between the start time and the current time //
 var diffTime = moment().diff(moment(convertedFirstTime), "minutes");
 
-    console.log("Difference in the time: " + diffTime);
+    console.log("Difference in the time: " + diffTime) ;
 
 // Divide the difference by the frequency to get the time apart remainder //
 
@@ -106,7 +106,7 @@ var tRemainder = diffTime % getFrequency;
 
 var minutesAway = getFrequency - tRemainder; 
 
-    console.log("Minutes until train" + minutesAway);
+    console.log("Minutes until train " + minutesAway);
 
 // Figure out when the next train will come by adding the minutes from arrival to current time //
 
@@ -118,9 +118,17 @@ var nextTrain = moment().add(minutesAway, "minutes");
 
 var nextArrival = moment(nextTrain, "HHmm").format("h:mm A");
 
-// Dynamically adding entry to the "Add Train" section //
+// Adding entry to the "Add Train" section //
 
-$("#trainTable > tbody").append("<tr><td>" + getName + "</td><td>" + getDestination + "</td><td>" + getFrequency + "</td><td>" + nextArrival + "</td><td" + minutesAway + "</td><td>");
+var row = $('<tr>');
+
+row.append('<td>' + getName + "</td>")
+row.append('<td>' + getDestination + "</td>")
+row.append('<td>' + getFrequency + "</td>")
+row.append('<td>' + nextArrival + "</td>")
+row.append('<td>' + minutesAway + "</td>")
+
+$("#trainTable > tbody").append(row)
 
 });
 

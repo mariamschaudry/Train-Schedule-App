@@ -1,5 +1,6 @@
 body {
-    background: url('../assets/images/train3.jpg');
+    background: url('../assets/images/train2.jpg');
     background-size:cover; 
     background-repeat:no-repeat;
+    opacity: .9;
 } 
